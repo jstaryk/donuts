@@ -6,7 +6,7 @@ public class Settings {
 
     private Settings() {}
 
-    public static final int WIDTH = 2500;
+    public static final int WIDTH = 1800;
     public static final int HEIGHT = 400;
     public static final int UPDATES_PER_SECOND = 30;
     

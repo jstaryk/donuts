@@ -3,7 +3,6 @@ package pl.st.donuts;
 import static pl.st.donuts.Settings.HEIGHT;
 import static pl.st.donuts.Settings.WIDTH;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +10,9 @@ import java.util.Random;
 
 import pl.st.donuts.conveyors.CF;
 import pl.st.donuts.conveyors.Conveyor;
+import pl.st.donuts.generators.AlternatingLineGenerator;
+import pl.st.donuts.generators.Generator;
+import pl.st.donuts.generators.Randomizer;
 
 public class DonutsConveyor implements Game {
 
@@ -20,6 +22,9 @@ public class DonutsConveyor implements Game {
     private List<Donut> donuts;
 //    private List<Conveyor> conveyors;
     private Conveyor starter;
+    
+    private final Generator generator;
+    private final Randomizer randomizer;
 
     public DonutsConveyor() {
     	donuts = new ArrayList<>();
@@ -37,13 +42,13 @@ public class DonutsConveyor implements Game {
 //    	var r1 = CF.after(starter, 520, 380).vx(2).secVx(3.3).build();
 //    	var r2 = CF.after(r1, 100, 380).vx(1.5).color(Color.ORANGE).build();
     	
-    	starter = CF.of(0, 100,  280).vx(2).build();
+    	starter = CF.of(0, 140,  120).vx(2).build();
     	
     	/////
 //    	var w1 = CF.after(r2, 520, 380).vx(2).secVx(3.3).secWidth(280).build(); // 1.8/3   
 //    	var p1 = CF.after(w1, 180, 280).vx(3.3).build();
-    	var w2 = CF.after(starter, 40, 280).vx(3.3).secWidth(380).build();
-    	var p2 = CF.after(w2, 500, 380).vx(3.3).build();
+    	var w2 = CF.after(starter, 120, 120).vx(2).secWidth(240).build();
+    	var p2 = CF.after(w2, 800, 240).vx(4).build();
     	/////
 
     	/////
@@ -65,7 +70,11 @@ public class DonutsConveyor implements Game {
         display.start();
 
         UiFrame ui = new UiFrame(display::start, display::stop, this::reset);
+        var g = new AlternatingLineGenerator(starter);
+        g.setRowSize(4);
+        generator = g;
         
+        randomizer = new Randomizer(0.01, 0.01);
     }
 
     private void reset() {
@@ -74,6 +83,8 @@ public class DonutsConveyor implements Game {
     
     Random r = new Random();
     boolean full = true;
+    
+    
     private void addDLine() {
 //    	for (var i = 0; i < 10; i++) {
 //    		donuts.add(Donut.create(0,  32+i*37.5, starter));
@@ -81,11 +92,17 @@ public class DonutsConveyor implements Game {
 //    	for (var i = 0; i < 10; i++) {
 //    		donuts.add(Donut.create(-10 + r.nextInt(21),  32+i*37.5 - 8 + r.nextInt(16), starter));
 //    	}
-    	var im = full ? 8 : 7;
-    	for (var i = 0; i < im; i++) {
-    		donuts.add(Donut.create(0,   50 + (full ? 32 : 44)+i*32, starter));
-    	}
+    	
+    	// last
+//    	var im = full ? 8 : 7;
+//    	for (var i = 0; i < im; i++) {
+//    		donuts.add(Donut.create(0,   50 + (full ? 32 : 44)+i*32, starter));
+//    	}
     	full = !full;
+    	
+    	
+    	
+    	
     }
     
     private void clearList() {
@@ -95,7 +112,8 @@ public class DonutsConveyor implements Game {
     public void update() {
     	if (c++ > 12) {
     		c = 0;
-    		addDLine();
+//    		addDLine();
+    		donuts.addAll(randomizer.randomize(generator.generateBatch()));
     	}
     	donuts.forEach(d -> {
     		if (d.getConveyor() != null) {
