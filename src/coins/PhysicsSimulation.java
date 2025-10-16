@@ -268,10 +268,12 @@ public class PhysicsSimulation extends JPanel implements ActionListener, MouseLi
 
             g2.setColor((b == draggedBody) ? Color.RED : Color.ORANGE);
             g2.fill(new Ellipse2D.Double(x, y, d, d));
+            g2.setColor(Color.gray);
+            g2.fillArc(x, y, d, d, -90, (int) b.angle);
 
             g2.setColor(Color.BLACK);
             if (!b.isStatic) {
-            	g2.drawString(String.format("(%.0f, %.0f)", b.velocity.x, b.velocity.y), x, y - 5);
+            	g2.drawString(String.format("(%.0f, %.0f)", b.angle, b.velocity.y), x, y - 5);
             }
         }
     }
